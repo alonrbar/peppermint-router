@@ -15,9 +15,9 @@
   "scripts": {
     "dev": "rollup -c -w",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint \"./{src,test}/**/!(*.d).ts\"",
+    "lint": "eslint \"./src/**/!(*.d).ts\"",
     "test": "rimraf .tmp/dist-test && rollup -c rollup.config.test.js -w",
-    "release": "yarn typecheck && yarn lint && rimraf dist && mkdir dist && rollup -c"
+    "release": "yarn typecheck && yarn lint && rollup -c"
   },
   "dependencies": {},
   "peerDependencies": {

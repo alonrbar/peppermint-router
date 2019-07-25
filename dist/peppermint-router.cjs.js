@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
+var React = require('react');
 
 function removeStart(str, ...toRemove) {
   return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, (s, tr) => s.substring(tr.length), ...toRemove);
@@ -155,7 +156,11 @@ class HashRouter {
     // register unload handler
     window.addEventListener('beforeunload', e => {
       const promptMessage = this.onBeforeUnload ? this.onBeforeUnload() : undefined;
-      e.returnValue = promptMessage;
+
+      if (promptMessage) {
+        e.returnValue = promptMessage;
+      }
+
       return promptMessage;
     }); // listen to hash changes
 
@@ -219,5 +224,13 @@ class HashRouter {
 
 }
 
+class RouterView extends React.PureComponent {
+  render() {
+    return React.createElement("h1", null, "Hello");
+  }
+
+}
+
 exports.HashRouter = HashRouter;
+exports.RouterView = RouterView;
 //# sourceMappingURL=peppermint-router.cjs.js.map

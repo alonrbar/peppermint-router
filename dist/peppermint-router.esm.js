@@ -1,4 +1,5 @@
 import _defineProperty from '@babel/runtime/helpers/esm/defineProperty';
+import { PureComponent, createElement } from 'react';
 
 function removeStart(str, ...toRemove) {
   return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, (s, tr) => s.substring(tr.length), ...toRemove);
@@ -149,7 +150,11 @@ class HashRouter {
     // register unload handler
     window.addEventListener('beforeunload', e => {
       const promptMessage = this.onBeforeUnload ? this.onBeforeUnload() : undefined;
-      e.returnValue = promptMessage;
+
+      if (promptMessage) {
+        e.returnValue = promptMessage;
+      }
+
       return promptMessage;
     }); // listen to hash changes
 
@@ -213,5 +218,12 @@ class HashRouter {
 
 }
 
-export { HashRouter };
+class RouterView extends PureComponent {
+  render() {
+    return createElement("h1", null, "Hello");
+  }
+
+}
+
+export { HashRouter, RouterView };
 //# sourceMappingURL=peppermint-router.esm.js.map
