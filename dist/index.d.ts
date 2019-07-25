@@ -47,3 +47,14 @@ export interface RouterViewProps {
 }
 
 export class RouterView extends React.PureComponent<RouterViewProps> { }
+
+//
+// Route
+//
+
+export interface RouteProps {
+    path: string;
+    component: React.ComponentType<any>;
+}
+
+export class Route extends React.PureComponent<RouteProps> { }

@@ -54,7 +54,7 @@ class HashRouter {
 
     _defineProperty(this, "_onBeforeUnload", void 0);
 
-    _defineProperty(this, "currentRoute", void 0);
+    _defineProperty(this, "_currentRoute", void 0);
 
     _defineProperty(this, "routes", {});
 
@@ -63,7 +63,7 @@ class HashRouter {
 
       path = this.normalizePath(path); // don't re-navigate to the same page
 
-      if (path === this.currentRoute) return; // find the route to active
+      if (path === this._currentRoute) return; // find the route to active
 
       const matchResult = this.match(path); // invoke beforeNavigation handler
 
@@ -73,14 +73,14 @@ class HashRouter {
 
         if (stopNavigation) {
           // restore location hash
-          window.history.replaceState(null, null, this.currentRoute);
-          this.goTo(this.currentRoute);
+          window.history.replaceState(null, null, this._currentRoute);
+          this.goTo(this._currentRoute);
           return;
         }
       } // activate route
 
 
-      this.currentRoute = path;
+      this._currentRoute = path;
 
       if (matchResult) {
         matchResult.route.action(matchResult.params);
@@ -127,6 +127,10 @@ class HashRouter {
     }
 
     this._onBeforeUnload = value;
+  }
+
+  get currentRoute() {
+    return this._currentRoute;
   } //
   // private members
   //
@@ -224,13 +228,85 @@ class HashRouter {
 
 }
 
-class RouterView extends React.PureComponent {
+const {
+  Provider: RouterProvider,
+  Consumer: RouterConsumer
+} =
+/*#__PURE__*/
+React.createContext(undefined);
+
+class Route extends React.PureComponent {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "renderRoute", context => {
+      console.warn('route render');
+      this.registerRoute(context);
+      if (this.props.path !== context.currentRoute.path) return null;
+      console.warn('actual render');
+      return React.createElement(this.props.component, {
+        route: context.currentRoute
+      });
+    });
+  }
+
   render() {
-    return React.createElement("h1", null, "Hello");
+    return React.createElement(RouterConsumer, null, this.renderRoute);
+  }
+
+  registerRoute(context) {
+    context.router.mapPath(this.props.path, params => {
+      context.setCurrentRoute({
+        path: this.props.path,
+        params
+      });
+    });
+  }
+
+}
+
+class RouterViewState {
+  constructor() {
+    _defineProperty(this, "currentRoute", {
+      path: undefined,
+      params: undefined
+    });
+  }
+
+}
+
+class RouterView extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "router", new HashRouter());
+
+    _defineProperty(this, "setCurrentRoute", currentRoute => {
+      this.setState({
+        currentRoute
+      });
+    });
+
+    this.state = new RouterViewState();
+  }
+
+  render() {
+    if (this.props.routerRef) {
+      this.props.routerRef(this.router);
+    }
+
+    return React.createElement(RouterProvider, {
+      value: {
+        router: this.router,
+        currentRoute: this.state.currentRoute,
+        setCurrentRoute: this.setCurrentRoute
+      }
+    }, this.props.children);
   }
 
 }
 
 exports.HashRouter = HashRouter;
+exports.Route = Route;
 exports.RouterView = RouterView;
 //# sourceMappingURL=peppermint-router.cjs.js.map

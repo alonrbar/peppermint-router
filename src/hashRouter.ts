@@ -64,6 +64,9 @@ export class HashRouter {
 
         this._onBeforeUnload = value;
     }
+    public get currentRoute(): string {
+        return this._currentRoute;
+    }
 
     //
     // private members
@@ -71,7 +74,7 @@ export class HashRouter {
 
     private _onBeforeNavigation: BeforeNavigationHandler;
     private _onBeforeUnload: BeforeUnloadHandler;
-    private currentRoute: string;
+    private _currentRoute: string;
     private readonly routes: IMap<Route> = {};
 
     //
@@ -126,7 +129,7 @@ export class HashRouter {
         path = this.normalizePath(path);
 
         // don't re-navigate to the same page
-        if (path === this.currentRoute)
+        if (path === this._currentRoute)
             return;
 
         // find the route to active
@@ -139,14 +142,14 @@ export class HashRouter {
             if (stopNavigation) {
 
                 // restore location hash
-                window.history.replaceState(null, null, this.currentRoute);
-                this.goTo(this.currentRoute);
+                window.history.replaceState(null, null, this._currentRoute);
+                this.goTo(this._currentRoute);
                 return;
             }
         }
 
         // activate route
-        this.currentRoute = path;
+        this._currentRoute = path;
         if (matchResult) {
             matchResult.route.action(matchResult.params);
             return;
