@@ -1,6 +1,6 @@
 {
   "name": "peppermint-router",
-  "description": "Lightweight hash router for React",
+  "description": "Lightweight hash router for React with zero dependencies",
   "version": "0.0.0",
   "author": "Alon Bar",
   "license": "MIT",
@@ -19,19 +19,29 @@
     "release": "yarn typecheck && yarn lint && rimraf dist && mkdir dist && rollup -c"
   },
   "dependencies": {},
+  "peerDependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
   "devDependencies": {
     "@babel/core": "7.5.0",
     "@babel/plugin-proposal-class-properties": "7.5.0",
     "@babel/plugin-proposal-object-rest-spread": "7.5.3",
     "@babel/plugin-proposal-optional-catch-binding": "7.2.0",
     "@babel/plugin-transform-runtime": "7.5.5",
+    "@babel/preset-react": "7.0.0",
     "@babel/preset-typescript": "7.3.3",
     "@types/node": "10.1.4",
+    "@types/react": "16.8.23",
+    "@types/react-dom": "16.8.5",
     "@typescript-eslint/eslint-plugin": "1.11.0",
     "@typescript-eslint/parser": "1.11.0",
     "babel-plugin-annotate-pure-calls": "0.4.0",
     "babel-plugin-ts-nameof": "0.3.0",
     "eslint": "5.16.0",
+    "eslint-plugin-react": "7.14.3",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
     "rimraf": "2.6.3",
     "rollup": "1.17.0",
     "rollup-plugin-babel": "4.3.3",

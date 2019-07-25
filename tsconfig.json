@@ -2,6 +2,8 @@
     "compileOnSave": true,
     "compilerOptions": {
 
+        "jsx": "react",
+
         // --- output --- //
         
         "declaration": false,
