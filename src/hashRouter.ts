@@ -97,7 +97,9 @@ export class HashRouter {
         // register unload handler
         window.addEventListener('beforeunload', e => {
             const promptMessage = (this.onBeforeUnload ? this.onBeforeUnload() : undefined);
-            e.returnValue = promptMessage;
+            if (promptMessage) {
+                e.returnValue = promptMessage;
+            }
             return promptMessage;
         });
 
@@ -204,7 +206,7 @@ export class HashRouter {
     }
 
     private normalizePath(path: string): string {
-        path =  (path || '');
+        path = (path || '');
         path = removeStart(path, '#', '/');
         path = removeEnd(path, '/');
         return path;

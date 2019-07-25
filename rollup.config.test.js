@@ -24,6 +24,7 @@ export default [{
         }),
         commonjs(),
         serve({
+            open: true,
             contentBase: ['test', '.tmp/dist-test'],
             port: 3000
         })
