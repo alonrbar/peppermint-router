@@ -1,17 +1,19 @@
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 
 function removeStart(str, ...toRemove) {
-  return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, ...toRemove);
+  return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, (s, tr) => s.substring(tr.length), ...toRemove);
 }
 function removeEnd(str, ...toRemove) {
-  return removeSide(str, /(\s*[\r\n]*)*$/, String.prototype.endsWith, ...toRemove);
+  return removeSide(str, /(\s*[\r\n]*)*$/, String.prototype.endsWith, (s, tr) => s.substring(0, s.length - tr.length), ...toRemove);
 }
 
-function removeSide(str, whitespaceReplacePattern, shouldRemove, ...toRemove) {
+function removeSide(str, whitespaceReplacePattern, shouldRemove, remove, ...toRemove) {
   // input validation
   if (typeof str !== "string") {
     throw new Error(`Missing arguement '${"str"}'.`);
@@ -34,8 +36,8 @@ function removeSide(str, whitespaceReplacePattern, shouldRemove, ...toRemove) {
     keepRunning = false;
 
     for (const trimStr of toRemove) {
-      if (!shouldRemove.apply(result, trimStr)) continue;
-      result = result.substring(0, result.length - trimStr.length);
+      if (!shouldRemove.call(result, trimStr)) continue;
+      result = remove(result, trimStr);
       keepRunning = true;
     }
   }
@@ -217,15 +219,5 @@ class HashRouter {
 
 }
 
-console.log('Starting router');
-const router =
-/*#__PURE__*/
-new HashRouter();
-router.mapPath('/', () => console.log('Root path'));
-router.mapPath('home', () => console.log('I am home'));
-router.mapPath('about', () => console.log('This is me'));
-
-router.fallback = () => console.log('404 - Not Found');
-
-router.listen();
+exports.HashRouter = HashRouter;
 //# sourceMappingURL=peppermint-router.cjs.js.map
