@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { HashRouter } from '../src/hashRouter';
-import { RouterView } from '../src/RouterView';
+import { HashRouter, RouterView } from 'peppermint-router';
 
 /* eslint-disable no-console */
 

@@ -1,6 +1,6 @@
 /.tmp
 /.vscode/settings.json
-/node_modules
+/**/node_modules
 /out
 /test-reports
 npm-debug.log*
