@@ -228,22 +228,17 @@ class HashRouter {
 
 }
 
-const {
-  Provider: RouterProvider,
-  Consumer: RouterConsumer
-} =
+const RouterContext =
 /*#__PURE__*/
 React.createContext(undefined);
 
-class Route extends React.PureComponent {
+class Route extends React.Component {
   constructor(...args) {
     super(...args);
 
     _defineProperty(this, "renderRoute", context => {
-      console.warn('route render');
       this.registerRoute(context);
       if (this.props.path !== context.currentRoute.path) return null;
-      console.warn('actual render');
       return React.createElement(this.props.component, {
         route: context.currentRoute
       });
@@ -251,7 +246,7 @@ class Route extends React.PureComponent {
   }
 
   render() {
-    return React.createElement(RouterConsumer, null, this.renderRoute);
+    return React.createElement(RouterContext.Consumer, null, this.renderRoute);
   }
 
   registerRoute(context) {
@@ -275,7 +270,7 @@ class RouterViewState {
 
 }
 
-class RouterView extends React.PureComponent {
+class RouterView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -290,12 +285,16 @@ class RouterView extends React.PureComponent {
     this.state = new RouterViewState();
   }
 
+  componentDidMount() {
+    this.router.listen();
+  }
+
   render() {
     if (this.props.routerRef) {
       this.props.routerRef(this.router);
     }
 
-    return React.createElement(RouterProvider, {
+    return React.createElement(RouterContext.Provider, {
       value: {
         router: this.router,
         currentRoute: this.state.currentRoute,

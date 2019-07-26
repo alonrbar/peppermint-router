@@ -2,4 +2,10 @@
 
 Lightweight hash router for React.
 
-## Work in progress...
+```jsx
+<RouterView>
+    <Route path="/" component={HomePage} />
+    <Route path="home" component={HomePage} />
+    <Route path="about" component={AboutPage} />
+</RouterView>
+```

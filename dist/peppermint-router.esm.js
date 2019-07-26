@@ -1,5 +1,5 @@
 import _defineProperty from '@babel/runtime/helpers/esm/defineProperty';
-import { createContext, PureComponent, createElement } from 'react';
+import { createContext, Component, createElement } from 'react';
 
 function removeStart(str, ...toRemove) {
   return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, (s, tr) => s.substring(tr.length), ...toRemove);
@@ -222,22 +222,17 @@ class HashRouter {
 
 }
 
-const {
-  Provider: RouterProvider,
-  Consumer: RouterConsumer
-} =
+const RouterContext =
 /*#__PURE__*/
 createContext(undefined);
 
-class Route extends PureComponent {
+class Route extends Component {
   constructor(...args) {
     super(...args);
 
     _defineProperty(this, "renderRoute", context => {
-      console.warn('route render');
       this.registerRoute(context);
       if (this.props.path !== context.currentRoute.path) return null;
-      console.warn('actual render');
       return createElement(this.props.component, {
         route: context.currentRoute
       });
@@ -245,7 +240,7 @@ class Route extends PureComponent {
   }
 
   render() {
-    return createElement(RouterConsumer, null, this.renderRoute);
+    return createElement(RouterContext.Consumer, null, this.renderRoute);
   }
 
   registerRoute(context) {
@@ -269,7 +264,7 @@ class RouterViewState {
 
 }
 
-class RouterView extends PureComponent {
+class RouterView extends Component {
   constructor(props) {
     super(props);
 
@@ -284,12 +279,16 @@ class RouterView extends PureComponent {
     this.state = new RouterViewState();
   }
 
+  componentDidMount() {
+    this.router.listen();
+  }
+
   render() {
     if (this.props.routerRef) {
       this.props.routerRef(this.router);
     }
 
-    return createElement(RouterProvider, {
+    return createElement(RouterContext.Provider, {
       value: {
         router: this.router,
         currentRoute: this.state.currentRoute,

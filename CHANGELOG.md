@@ -2,7 +2,9 @@
 
 ## [Unreleased](https://github.com/alonrbar/peppermint-router/tree/develop)
 
-- Work in progress...
+## [0.0.1 - 2018-07-26](https://github.com/alonrbar/peppermint-router/tree/v0.0.1)
+
+- First version
 
 ---
 
