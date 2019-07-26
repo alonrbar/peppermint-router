@@ -4,12 +4,136 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
 var React = require('react');
+var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
+
+function removeStart(str, ...toRemove) {
+  return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, (s, tr) => s.substring(tr.length), ...toRemove);
+}
+function removeEnd(str, ...toRemove) {
+  return removeSide(str, /(\s*[\r\n]*)*$/, String.prototype.endsWith, (s, tr) => s.substring(0, s.length - tr.length), ...toRemove);
+}
+
+function removeSide(str, whitespaceReplacePattern, shouldRemove, remove, ...toRemove) {
+  // input validation
+  if (typeof str !== "string") {
+    throw new Error(`Missing arguement '${"str"}'.`);
+  }
+
+  if (!toRemove.every(tr => typeof tr === 'string')) {
+    throw new Error(`Invalid argument '${toRemove}'. Only strings expected.`);
+  } // default behavior: trim white spaces
+
+
+  if (!toRemove.length) {
+    return str.replace(whitespaceReplacePattern, "");
+  } // trim specified patterns
+
+
+  let result = str.substring(0);
+  let keepRunning = true;
+
+  while (result.length && keepRunning) {
+    keepRunning = false;
+
+    for (const trimStr of toRemove) {
+      if (!shouldRemove.call(result, trimStr)) continue;
+      result = remove(result, trimStr);
+      keepRunning = true;
+    }
+  }
+
+  return result;
+}
+
+class WaitHandle {
+  constructor() {
+    _defineProperty(this, "_resolve", void 0);
+
+    _defineProperty(this, "_reject", void 0);
+
+    _defineProperty(this, "promise", void 0);
+
+    this.promise = new Promise((resolve, reject) => {
+      this._resolve = resolve;
+      this._reject = reject;
+    });
+  }
+
+  wait() {
+    return this.promise;
+  }
+
+  resolve(result) {
+    this._resolve(result);
+  }
+
+  reject(err) {
+    this._reject(err);
+  }
+
+}
 
 const RouterContext =
 /*#__PURE__*/
 React.createContext(undefined);
+
+function PromptNavigation(props) {
+  const context = React.useContext(RouterContext);
+  const [state, setState] = React.useState({
+    isNavigating: false
+  });
+  React.useEffect(() => {
+    // in-app navigation handler
+    if (props.enabled && props.children) {
+      context.router.onBeforeNavigation = async () => {
+        const confirmNavigation = new WaitHandle();
+        setState({
+          isNavigating: true,
+          confirmNavigation
+        });
+        let confirmed = true;
+        await confirmNavigation.wait().catch(() => confirmed = false);
+        return confirmed;
+      };
+    } // out-of-app navigation handler
+
+
+    if (props.enabled && props.exitPrompt) {
+      context.router.onBeforeUnload = () => props.exitPrompt;
+    } // dispose
+
+
+    return () => {
+      context.router.onBeforeNavigation = null;
+      context.router.onBeforeUnload = null;
+    };
+  });
+
+  const clearState = () => setState({
+    isNavigating: false,
+    confirmNavigation: null
+  }); // render
+
+
+  if (props.enabled && props.children) {
+    return props.children({
+      isNavigating: state.isNavigating,
+      confirm: () => {
+        const confirm = state.confirmNavigation;
+        clearState();
+        confirm && confirm.resolve();
+      },
+      cancel: () => {
+        const confirm = state.confirmNavigation;
+        clearState();
+        confirm && confirm.reject();
+      }
+    });
+  }
+
+  return null;
+}
 
 class Route extends React.Component {
   constructor(...args) {
@@ -65,45 +189,6 @@ class RouteFallback extends React.Component {
 
 }
 
-function removeStart(str, ...toRemove) {
-  return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, (s, tr) => s.substring(tr.length), ...toRemove);
-}
-function removeEnd(str, ...toRemove) {
-  return removeSide(str, /(\s*[\r\n]*)*$/, String.prototype.endsWith, (s, tr) => s.substring(0, s.length - tr.length), ...toRemove);
-}
-
-function removeSide(str, whitespaceReplacePattern, shouldRemove, remove, ...toRemove) {
-  // input validation
-  if (typeof str !== "string") {
-    throw new Error(`Missing arguement '${"str"}'.`);
-  }
-
-  if (!toRemove.every(tr => typeof tr === 'string')) {
-    throw new Error(`Invalid argument '${toRemove}'. Only strings expected.`);
-  } // default behavior: trim white spaces
-
-
-  if (!toRemove.length) {
-    return str.replace(whitespaceReplacePattern, "");
-  } // trim specified patterns
-
-
-  let result = str.substring(0);
-  let keepRunning = true;
-
-  while (result.length && keepRunning) {
-    keepRunning = false;
-
-    for (const trimStr of toRemove) {
-      if (!shouldRemove.call(result, trimStr)) continue;
-      result = remove(result, trimStr);
-      keepRunning = true;
-    }
-  }
-
-  return result;
-}
-
 class HashRouter {
   constructor() {
     _defineProperty(this, "fallback", void 0);
@@ -137,7 +222,6 @@ class HashRouter {
 
         if (continueNavigation === false) {
           // restore location hash
-          window.history.replaceState(null, null, this._currentRoute.path);
           this.goTo(this._currentRoute.path);
           return;
         }
@@ -340,6 +424,7 @@ class RouterView extends React.Component {
 }
 
 exports.HashRouter = HashRouter;
+exports.PromptNavigation = PromptNavigation;
 exports.Route = Route;
 exports.RouteFallback = RouteFallback;
 exports.RouterContext = RouterContext;
