@@ -166,7 +166,6 @@ export class HashRouter {
             if (continueNavigation === false) {
 
                 // restore location hash
-                window.history.replaceState(null, null, this._currentRoute.path);
                 this.goTo(this._currentRoute.path);
                 return;
             }
