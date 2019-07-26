@@ -63,7 +63,7 @@ export interface RouterViewProps {
     routerRef?: (router: HashRouter) => void;
 }
 
-export class RouterView extends React.PureComponent<RouterViewProps> { }
+export class RouterView extends React.Component<RouterViewProps> { }
 
 //
 // Route
@@ -74,4 +74,10 @@ export interface RouteProps {
     component: React.ComponentType<any>;
 }
 
-export class Route extends React.PureComponent<RouteProps> { }
+export class Route extends React.Component<RouteProps> { }
+
+export interface RouteFallbackProps {
+    component: React.ComponentType<any>;
+}
+
+export class RouteFallback extends React.Component<RouteFallbackProps> { }

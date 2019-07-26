@@ -1,15 +1,10 @@
 import * as React from 'react';
-import { HashRouter, RouteParams } from '../logic';
-
-export interface CurrentRoute {
-    path: string;
-    params: RouteParams;
-}
+import { HashRouter, RouteInfo } from '../logic';
 
 export interface RouterContextValue {
     router: HashRouter;
-    currentRoute: CurrentRoute;
-    setCurrentRoute: (route: CurrentRoute) => void;
+    currentRoute: RouteInfo;
+    setCurrentRoute: (route: RouteInfo) => void;
 }
 
 export const RouterContext = React.createContext<RouterContextValue>(undefined);

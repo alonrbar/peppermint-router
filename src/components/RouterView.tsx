@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { HashRouter } from '../logic';
-import { CurrentRoute, RouterContext } from './RouterContext';
+import { HashRouter, RouteInfo } from '../logic';
+import { RouterContext } from './RouterContext';
 
 export interface RouterViewProps {
     routerRef?: (router: HashRouter) => void;
 }
 
 class RouterViewState {
-    public currentRoute: CurrentRoute = {
+    public currentRoute: RouteInfo = {
         path: undefined,
         params: undefined
     };
@@ -45,9 +45,7 @@ export class RouterView extends React.Component<RouterViewProps, RouterViewState
         );
     }
 
-    private setCurrentRoute = (currentRoute: CurrentRoute) => {
-        this.setState({
-            currentRoute
-        });
+    private setCurrentRoute = (currentRoute: RouteInfo) => {
+        this.setState({ currentRoute });
     };
 }
