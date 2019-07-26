@@ -76,8 +76,32 @@ export interface RouteProps {
 
 export class Route extends React.Component<RouteProps> { }
 
+//
+// RouteFallback
+//
+
 export interface RouteFallbackProps {
     component: React.ComponentType<any>;
 }
 
 export class RouteFallback extends React.Component<RouteFallbackProps> { }
+
+//
+// PromptNavigation
+//
+
+export interface PromptNavigationRenderProps {
+    isNavigating: boolean;
+    confirm: VoidFunction;
+    cancel: VoidFunction;
+}
+
+export type PromptNavigationRender = (props: PromptNavigationRenderProps) => React.ReactNode;
+
+export interface PromptNavigationProps {
+    enabled?: boolean;
+    exitPrompt?: string;
+    children?: PromptNavigationRender;
+}
+
+export const PromptNavigation: React.FunctionComponent<PromptNavigationProps>;

@@ -1,3 +1,4 @@
+export * from './PromptNavigation';
 export * from './Route';
 export * from './RouteFallback';
 export * from './RouterContext';
