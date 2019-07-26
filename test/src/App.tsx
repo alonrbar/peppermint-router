@@ -1,6 +1,6 @@
 import { Route, RouteFallback, RouterView } from 'peppermint-router';
 import * as React from 'react';
-import { AboutPage, ErrorPage404, HomePage } from './pages';
+import { AboutPage, HomePage, NotFound } from './pages';
 
 const styles = {
     menu: {
@@ -30,7 +30,7 @@ export class App extends React.PureComponent {
                 <Route path="/" component={HomePage} />
                 <Route path="home" component={HomePage} />
                 <Route path="about" component={AboutPage} />
-                <RouteFallback component={ErrorPage404} />
+                <RouteFallback component={NotFound} />
 
             </RouterView>
         );

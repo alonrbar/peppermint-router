@@ -1,5 +1,5 @@
 import * as React from 'react';
 
-export const ErrorPage404: React.SFC = () => (
+export const NotFound: React.SFC = () => (
     <h1>404</h1>
 );
