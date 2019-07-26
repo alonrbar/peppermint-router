@@ -13,11 +13,12 @@
     "src/**/*.{ts,tsx}"
   ],
   "scripts": {
-    "dev": "rollup -c -w",
+    "dev": "concurrently \"yarn build -w\" \"yarn typecheck --watch\"",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"./src/**/!(*.d).ts\"",
     "test": "cd test && yarn start",
-    "release": "yarn typecheck && yarn lint && rollup -c"
+    "build": "rollup -c",
+    "release": "yarn typecheck && yarn lint && yarn build"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5"
@@ -42,6 +43,7 @@
     "@typescript-eslint/parser": "1.11.0",
     "babel-plugin-annotate-pure-calls": "0.4.0",
     "babel-plugin-ts-nameof": "0.3.0",
+    "concurrently": "4.1.1",
     "eslint": "5.16.0",
     "eslint-plugin-react": "7.14.3",
     "react": "^16.8.6",
