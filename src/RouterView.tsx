@@ -22,6 +22,10 @@ export class RouterView extends React.PureComponent<RouterViewProps, RouterViewS
         this.state = new RouterViewState();
     }
 
+    public componentDidMount() {
+        this.router.listen();
+    }
+
     public render() {
 
         if (this.props.routerRef) {

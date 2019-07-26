@@ -19,14 +19,10 @@ export class Route extends React.PureComponent<RouteProps> {
 
     private renderRoute = (context: RouterContext) => {
 
-        console.warn('route render');
-
         this.registerRoute(context);
 
         if (this.props.path !== context.currentRoute.path)
             return null;
-
-        console.warn('actual render');
 
         return (
             React.createElement(

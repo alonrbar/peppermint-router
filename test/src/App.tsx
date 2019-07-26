@@ -1,14 +1,15 @@
+import { Route, RouterView } from 'peppermint-router';
 import * as React from 'react';
-import { RouterView, Route } from 'peppermint-router';
+import { AboutPage, ErrorPage404, HomePage } from './pages';
 
 export class App extends React.PureComponent {
     public render() {
         return (
             <RouterView>
-                <Route path="/" component={null} />
-                <Route path="home" component={null} />
-                <Route path="about" component={null} />
-                <Route path="404" component={null} />
+                <Route path="/" component={HomePage} />
+                <Route path="home" component={HomePage} />
+                <Route path="about" component={AboutPage} />
+                <Route path="404" component={ErrorPage404} />
             </RouterView>
         );
     }
