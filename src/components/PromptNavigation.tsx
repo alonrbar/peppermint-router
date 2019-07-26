@@ -29,7 +29,7 @@ export function PromptNavigation(props: PromptNavigationProps) {
     React.useEffect(() => {
 
         // in-app navigation handler
-        if (props.enabled && props.children) {
+        if (props.enabled !== false && props.children) {
             context.router.onBeforeNavigation = async () => {
                 const confirmNavigation = new WaitHandle();
                 setState({
@@ -43,7 +43,7 @@ export function PromptNavigation(props: PromptNavigationProps) {
         }
 
         // out-of-app navigation handler
-        if (props.enabled && props.exitPrompt) {
+        if (props.enabled !== false && props.exitPrompt) {
             context.router.onBeforeUnload = () => props.exitPrompt;
         }
 
@@ -60,7 +60,7 @@ export function PromptNavigation(props: PromptNavigationProps) {
     });
 
     // render
-    if (props.enabled && props.children) {
+    if (props.enabled !== false && props.children) {
         return props.children({
             isNavigating: state.isNavigating,
             confirm: () => {
