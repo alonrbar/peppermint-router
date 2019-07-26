@@ -6,10 +6,10 @@ export interface CurrentRoute {
     params: RouteParams;
 }
 
-export interface RouterContext {
+export interface RouterContextValue {
     router: HashRouter;
     currentRoute: CurrentRoute;
     setCurrentRoute: (route: CurrentRoute) => void;
 }
 
-export const { Provider: RouterProvider, Consumer: RouterConsumer } = React.createContext<RouterContext>(undefined);
+export const RouterContext = React.createContext<RouterContextValue>(undefined);

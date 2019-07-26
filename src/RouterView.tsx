@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { HashRouter } from './hashRouter';
-import { RouterProvider, CurrentRoute } from './RouterContext';
+import { CurrentRoute, RouterContext } from './RouterContext';
 
 export interface RouterViewProps {
     routerRef?: (router: HashRouter) => void;
@@ -13,7 +13,7 @@ class RouterViewState {
     };
 }
 
-export class RouterView extends React.PureComponent<RouterViewProps, RouterViewState> {
+export class RouterView extends React.Component<RouterViewProps, RouterViewState> {
 
     private router = new HashRouter();
 
@@ -33,7 +33,7 @@ export class RouterView extends React.PureComponent<RouterViewProps, RouterViewS
         }
 
         return (
-            <RouterProvider
+            <RouterContext.Provider
                 value={{
                     router: this.router,
                     currentRoute: this.state.currentRoute,
@@ -41,7 +41,7 @@ export class RouterView extends React.PureComponent<RouterViewProps, RouterViewS
                 }}
             >
                 {this.props.children}
-            </RouterProvider>
+            </RouterContext.Provider>
         );
     }
 

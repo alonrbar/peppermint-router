@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { RouteParams } from './hashRouter';
-import { RouterConsumer, RouterContext } from './RouterContext';
+import { RouterContext, RouterContextValue } from './RouterContext';
 
 export interface RouteProps {
     path: string;
     component: React.ComponentType<any>;
 }
 
-export class Route extends React.PureComponent<RouteProps> {
+export class Route extends React.Component<RouteProps> {
 
     public render() {
         return (
-            <RouterConsumer>
+            <RouterContext.Consumer>
                 {this.renderRoute}
-            </RouterConsumer>
+            </RouterContext.Consumer>
         );
     }
 
-    private renderRoute = (context: RouterContext) => {
+    private renderRoute = (context: RouterContextValue) => {
 
         this.registerRoute(context);
 
@@ -34,7 +34,7 @@ export class Route extends React.PureComponent<RouteProps> {
         );
     };
 
-    private registerRoute(context: RouterContext) {
+    private registerRoute(context: RouterContextValue) {
         context.router.mapPath(this.props.path, (params: RouteParams) => {
             context.setCurrentRoute({
                 path: this.props.path,
