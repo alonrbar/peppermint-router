@@ -1,23 +1,36 @@
-import { IMap } from './types';
-import { removeStart, removeEnd } from './utils';
+import { IMap, removeEnd, removeStart } from '../utils';
 
 // originally based on PathJS: https://github.com/mtrpcic/pathjs
 
 export type RouteParams = IMap<string>;
 
+export interface RouteInfo {
+    path: string;
+    params: RouteParams;
+}
+
+export interface BeforeNavigationEvent {
+    prevRoute: RouteInfo;
+    nextRoute: RouteInfo;
+}
+
+export type BeforeNavigationHandler = (e: BeforeNavigationEvent) => Promise<boolean>;
+
+export interface BeforeUnloadEvent {
+    currentRoute: RouteInfo;
+}
+
+export type BeforeUnloadHandler = (e: BeforeUnloadEvent) => string;
+
 export type RouteAction = (params: RouteParams) => void;
 
-export type BeforeNavigationHandler = (nextPath: string) => Promise<boolean>;
-
-export type BeforeUnloadHandler = () => string;
-
-interface Route {
+interface RouteConfig {
     path: string;
     action: RouteAction;
 }
 
-interface RouteMatchResult {
-    route: Route;
+interface RouteConfigMatchResult {
+    route: RouteConfig;
     params: RouteParams;
 }
 
@@ -64,7 +77,7 @@ export class HashRouter {
 
         this._onBeforeUnload = value;
     }
-    public get currentRoute(): string {
+    public get currentRoute(): RouteInfo {
         return this._currentRoute;
     }
 
@@ -74,8 +87,8 @@ export class HashRouter {
 
     private _onBeforeNavigation: BeforeNavigationHandler;
     private _onBeforeUnload: BeforeUnloadHandler;
-    private _currentRoute: string;
-    private readonly routes: IMap<Route> = {};
+    private _currentRoute: RouteInfo = ({} as RouteInfo);
+    private readonly routes: IMap<RouteConfig> = {};
 
     //
     // public methods
@@ -99,7 +112,12 @@ export class HashRouter {
 
         // register unload handler
         window.addEventListener('beforeunload', e => {
-            const promptMessage = (this.onBeforeUnload ? this.onBeforeUnload() : undefined);
+            const promptMessage = (this.onBeforeUnload ?
+                this.onBeforeUnload({
+                    currentRoute: this.currentRoute
+                }) :
+                undefined
+            );
             if (promptMessage) {
                 e.returnValue = promptMessage;
             }
@@ -129,27 +147,33 @@ export class HashRouter {
         path = this.normalizePath(path);
 
         // don't re-navigate to the same page
-        if (path === this._currentRoute)
+        if (path === this._currentRoute.path)
             return;
 
         // find the route to active
         const matchResult = this.match(path);
+        const nextRoute: RouteInfo = {
+            path,
+            params: (matchResult && matchResult.params) || {}
+        };
 
         // invoke beforeNavigation handler
         if (this.onBeforeNavigation) {
-            const nextPath = matchResult && matchResult.route.path;
-            const stopNavigation = (await this.onBeforeNavigation(nextPath) === false);
-            if (stopNavigation) {
+            const continueNavigation = await this.onBeforeNavigation({
+                prevRoute: this.currentRoute,
+                nextRoute
+            });
+            if (continueNavigation === false) {
 
                 // restore location hash
-                window.history.replaceState(null, null, this._currentRoute);
-                this.goTo(this._currentRoute);
+                window.history.replaceState(null, null, this._currentRoute.path);
+                this.goTo(this._currentRoute.path);
                 return;
             }
         }
 
         // activate route
-        this._currentRoute = path;
+        this._currentRoute = nextRoute;
         if (matchResult) {
             matchResult.route.action(matchResult.params);
             return;
@@ -161,7 +185,7 @@ export class HashRouter {
         }
     };
 
-    private match(pathToMatch: string): RouteMatchResult {
+    private match(pathToMatch: string): RouteConfigMatchResult {
 
         for (const routePath of Object.keys(this.routes)) {
 

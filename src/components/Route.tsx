@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteParams } from './hashRouter';
+import { RouteParams } from '../logic';
 import { RouterContext, RouterContextValue } from './RouterContext';
 
 export interface RouteProps {

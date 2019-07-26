@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HashRouter, RouteParams } from './hashRouter';
+import { HashRouter, RouteParams } from '../logic';
 
 export interface CurrentRoute {
     path: string;

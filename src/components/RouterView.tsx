@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HashRouter } from './hashRouter';
+import { HashRouter } from '../logic';
 import { CurrentRoute, RouterContext } from './RouterContext';
 
 export interface RouterViewProps {

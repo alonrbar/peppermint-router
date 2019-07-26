@@ -8,27 +8,43 @@ export interface IMap<T> {
 // HashRouter
 //
 
-export type RouteParams = IMap<string>;
+export interface RouteInfo {
+    path: string;
+    params: RouteParams;
+}
+
+export interface BeforeNavigationEvent {
+    prevRoute: RouteInfo;
+    nextRoute: RouteInfo;
+}
+
+export type BeforeNavigationHandler = (e: BeforeNavigationEvent) => Promise<boolean>;
+
+export interface BeforeUnloadEvent {
+    currentRoute: RouteInfo;
+}
+
+export type BeforeUnloadHandler = (e: BeforeUnloadEvent) => string;
 
 export type RouteAction = (params: RouteParams) => void;
-
-export type BeforeNavigationHandler = (nextPath: string) => Promise<boolean>;
-
-export type BeforeUnloadHandler = () => string;
 
 export class HashRouter {
 
     public fallback: VoidFunction;
+    
     /**
      * Triggered when a navigation inside the application takes place.  
      * Return `false` to cancel navigation.
      */
     public onBeforeNavigation: BeforeNavigationHandler;
+    
     /**
      * Triggered when a navigation to another site takes place.
      * Return a message to show to the user.  
      */
     public onBeforeUnload: BeforeUnloadHandler;
+
+    public readonly currentRoute: RouteInfo;
 
     public mapPath(path: string, action: RouteAction): void;
 
@@ -44,6 +60,7 @@ export class HashRouter {
 //
 
 export interface RouterViewProps {
+    routerRef?: (router: HashRouter) => void;
 }
 
 export class RouterView extends React.PureComponent<RouterViewProps> { }
