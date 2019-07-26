@@ -1,6 +1,6 @@
 # peppermint-router
 
-Lightweight hash router for React.
+Lightweight hash router for React
 
 ```jsx
 <RouterView>
