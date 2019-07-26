@@ -2,9 +2,15 @@
 
 ## [Unreleased](https://github.com/alonrbar/peppermint-router/tree/develop)
 
+## [0.0.2 - 2018-07-26](https://github.com/alonrbar/peppermint-router/tree/v0.0.2)
+
+### Added
+
+- RouteFallback component.
+
 ## [0.0.1 - 2018-07-26](https://github.com/alonrbar/peppermint-router/tree/v0.0.1)
 
-- First version
+### First version
 
 ---
 

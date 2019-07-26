@@ -7,5 +7,6 @@ Lightweight hash router for React.
     <Route path="/" component={HomePage} />
     <Route path="home" component={HomePage} />
     <Route path="about" component={AboutPage} />
+    <RouteFallback component={NotFound} />
 </RouterView>
 ```

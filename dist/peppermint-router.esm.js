@@ -1,6 +1,64 @@
 import _defineProperty from '@babel/runtime/helpers/esm/defineProperty';
 import { createContext, Component, createElement } from 'react';
 
+const RouterContext =
+/*#__PURE__*/
+createContext(undefined);
+
+class Route extends Component {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "renderRoute", context => {
+      this.registerRoute(context);
+      if (this.props.path !== context.currentRoute.path) return null;
+      return createElement(this.props.component, {
+        route: context.currentRoute
+      });
+    });
+  }
+
+  render() {
+    return createElement(RouterContext.Consumer, null, this.renderRoute);
+  }
+
+  registerRoute(context) {
+    context.router.mapPath(this.props.path, params => {
+      context.setCurrentRoute({
+        path: this.props.path,
+        params
+      });
+    });
+  }
+
+}
+
+class RouteFallback extends Component {
+  constructor(...args) {
+    super(...args);
+
+    _defineProperty(this, "renderRoute", context => {
+      this.registerRoute(context);
+      if (context.currentRoute.path !== null) return null;
+      return createElement(this.props.component, {
+        route: context.currentRoute
+      });
+    });
+  }
+
+  render() {
+    return createElement(RouterContext.Consumer, null, this.renderRoute);
+  }
+
+  registerRoute(context) {
+    context.router.fallback = () => context.setCurrentRoute({
+      path: null,
+      params: null
+    });
+  }
+
+}
+
 function removeStart(str, ...toRemove) {
   return removeSide(str, /^(\s*[\r\n]*)*/, String.prototype.startsWith, (s, tr) => s.substring(tr.length), ...toRemove);
 }
@@ -48,7 +106,7 @@ class HashRouter {
 
     _defineProperty(this, "_onBeforeUnload", void 0);
 
-    _defineProperty(this, "_currentRoute", void 0);
+    _defineProperty(this, "_currentRoute", {});
 
     _defineProperty(this, "routes", {});
 
@@ -57,24 +115,30 @@ class HashRouter {
 
       path = this.normalizePath(path); // don't re-navigate to the same page
 
-      if (path === this._currentRoute) return; // find the route to active
+      if (path === this._currentRoute.path) return; // find the route to active
 
-      const matchResult = this.match(path); // invoke beforeNavigation handler
+      const matchResult = this.match(path);
+      const nextRoute = {
+        path,
+        params: matchResult && matchResult.params || {}
+      }; // invoke beforeNavigation handler
 
       if (this.onBeforeNavigation) {
-        const nextPath = matchResult && matchResult.route.path;
-        const stopNavigation = (await this.onBeforeNavigation(nextPath)) === false;
+        const continueNavigation = await this.onBeforeNavigation({
+          prevRoute: this.currentRoute,
+          nextRoute
+        });
 
-        if (stopNavigation) {
+        if (continueNavigation === false) {
           // restore location hash
-          window.history.replaceState(null, null, this._currentRoute);
-          this.goTo(this._currentRoute);
+          window.history.replaceState(null, null, this._currentRoute.path);
+          this.goTo(this._currentRoute.path);
           return;
         }
       } // activate route
 
 
-      this._currentRoute = path;
+      this._currentRoute = nextRoute;
 
       if (matchResult) {
         matchResult.route.action(matchResult.params);
@@ -153,7 +217,9 @@ class HashRouter {
   listen() {
     // register unload handler
     window.addEventListener('beforeunload', e => {
-      const promptMessage = this.onBeforeUnload ? this.onBeforeUnload() : undefined;
+      const promptMessage = this.onBeforeUnload ? this.onBeforeUnload({
+        currentRoute: this.currentRoute
+      }) : undefined;
 
       if (promptMessage) {
         e.returnValue = promptMessage;
@@ -222,38 +288,6 @@ class HashRouter {
 
 }
 
-const RouterContext =
-/*#__PURE__*/
-createContext(undefined);
-
-class Route extends Component {
-  constructor(...args) {
-    super(...args);
-
-    _defineProperty(this, "renderRoute", context => {
-      this.registerRoute(context);
-      if (this.props.path !== context.currentRoute.path) return null;
-      return createElement(this.props.component, {
-        route: context.currentRoute
-      });
-    });
-  }
-
-  render() {
-    return createElement(RouterContext.Consumer, null, this.renderRoute);
-  }
-
-  registerRoute(context) {
-    context.router.mapPath(this.props.path, params => {
-      context.setCurrentRoute({
-        path: this.props.path,
-        params
-      });
-    });
-  }
-
-}
-
 class RouterViewState {
   constructor() {
     _defineProperty(this, "currentRoute", {
@@ -299,5 +333,5 @@ class RouterView extends Component {
 
 }
 
-export { HashRouter, Route, RouterView };
+export { HashRouter, Route, RouteFallback, RouterContext, RouterView };
 //# sourceMappingURL=peppermint-router.esm.js.map
