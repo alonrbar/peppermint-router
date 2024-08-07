@@ -1,6 +1,10 @@
 # Change Log
 
-## [Unreleased](https://github.com/alonrbar/peppermint-router/tree/develop)
+## [0.1.1 - 2024-08-07](https://github.com/alonrbar/peppermint-router/tree/v0.1.1)
+
+## Changed
+
+- Minor readme updates.
 
 ## [0.1.0 - 2018-07-26](https://github.com/alonrbar/peppermint-router/tree/v0.1.0)
 
