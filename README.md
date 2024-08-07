@@ -4,8 +4,7 @@ Lightweight hash router for React
 
 [![package size](https://img.shields.io/bundlephobia/minzip/peppermint-router?label=minified%20gzipped)](https://bundlephobia.com/result?p=peppermint-router)
 [![npm version](https://img.shields.io/npm/v/peppermint-router.svg?label=version)](https://www.npmjs.com/package/peppermint-router)
-[![npm license](https://img.shields.io/npm/l/peppermint-router.svg)](https://www.npmjs.com/package/peppermint-router)
-[![dependencies](https://david-dm.org/alonrbar/peppermint-router.svg)](https://github.com/alonrbar/peppermint-router)
+[![license](https://img.shields.io/npm/l/peppermint-router.svg)](https://www.npmjs.com/package/peppermint-router)
 
 ## The gist
 
